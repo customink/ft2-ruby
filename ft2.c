@@ -25,7 +25,8 @@
 /************************************************************************/
 
 #include <ruby.h>
-#include <freetype/freetype.h>
+#include <ft2build.h>
+#include FT_FREETYPE_H
 #include FT_GLYPH_H
 
 #define VERSION "0.1.0"
@@ -1420,8 +1421,8 @@ static VALUE ft_face_kerning(VALUE self, VALUE left_glyph, VALUE right_glyph, VA
   if (err != FT_Err_Ok)
     handle_error(err);
 
-  rb_ary_push(ary, v.x);
-  rb_ary_push(ary, v.y);
+  rb_ary_push(ary, INT2FIX(v.x));
+  rb_ary_push(ary, INT2FIX(v.y));
   
   return ary;
 }
@@ -1971,7 +1972,7 @@ static VALUE ft_glyphslot_flags(VALUE self) {
   FT_GlyphSlot *glyph;
 
   Data_Get_Struct(self, FT_GlyphSlot, glyph);
-  return INT2NUM((*glyph)->flags);
+  return INT2NUM(0); //XXX: we don't use this, and it was causing a compiler error
 }
 
 /*
