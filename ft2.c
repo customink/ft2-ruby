@@ -1025,7 +1025,7 @@ static VALUE ft_face_glyph(VALUE self) {
   Data_Get_Struct(self, FT_Face, face);
 
   if ((*face)->glyph) 
-    return Data_Wrap_Struct(cGlyphSlot, 0, dont_free, (*face)->glyph);
+    return Data_Wrap_Struct(cGlyphSlot, 0, dont_free, &((*face)->glyph));
   else
     return Qnil;
 }
@@ -1962,20 +1962,6 @@ static VALUE ft_glyphslot_next(VALUE self) {
 }
 
 /*
- * Get the flags of a FT2::GlyphSlot.
- *
- * Examples:
- *   flags = slot.flags
- *
- */
-static VALUE ft_glyphslot_flags(VALUE self) {
-  FT_GlyphSlot *glyph;
-
-  Data_Get_Struct(self, FT_GlyphSlot, glyph);
-  return INT2NUM(0); //XXX: we don't use this, and it was causing a compiler error
-}
-
-/*
  * Get the FT2::GlyphMetrics of a FT2::GlyphSlot object.
  *
  * Examples:
@@ -2456,7 +2442,7 @@ static VALUE ft_glyph_class(VALUE self) {
 static VALUE ft_glyph_format(VALUE self) {
   FT_Glyph *glyph;
   Data_Get_Struct(self, FT_Glyph, glyph);
-  return INT2FIX((*glyph)->format);
+  return INT2NUM((*glyph)->format);
 }
 
 /*
@@ -2800,10 +2786,10 @@ static void define_constants(void) {
   /* define FT2::GlyphFormat constants */
   /*************************************/
   mGlyphFormat = rb_define_module_under(mFt2, "GlyphFormat");
-  rb_define_const(mGlyphFormat, "COMPOSITE", INT2FIX(ft_glyph_format_composite));
-  rb_define_const(mGlyphFormat, "BITMAP", INT2FIX(ft_glyph_format_bitmap));
-  rb_define_const(mGlyphFormat, "OUTLINE", INT2FIX(ft_glyph_format_outline));
-  rb_define_const(mGlyphFormat, "PLOTTER", INT2FIX(ft_glyph_format_plotter));
+  rb_define_const(mGlyphFormat, "COMPOSITE", INT2NUM(ft_glyph_format_composite));
+  rb_define_const(mGlyphFormat, "BITMAP", INT2NUM(ft_glyph_format_bitmap));
+  rb_define_const(mGlyphFormat, "OUTLINE", INT2NUM(ft_glyph_format_outline));
+  rb_define_const(mGlyphFormat, "PLOTTER", INT2NUM(ft_glyph_format_plotter));
 
   /**********************************/
   /* define FT2::Encoding constants */
@@ -3057,7 +3043,6 @@ void Init_ft2(void) {
   rb_define_method(cGlyphSlot, "library", ft_glyphslot_library, 0);
   rb_define_method(cGlyphSlot, "face", ft_glyphslot_face, 0);
   rb_define_method(cGlyphSlot, "next", ft_glyphslot_next, 0);
-  rb_define_method(cGlyphSlot, "flags", ft_glyphslot_flags, 0);
   rb_define_method(cGlyphSlot, "metrics", ft_glyphslot_metrics, 0);
 
   rb_define_method(cGlyphSlot, "h_advance", ft_glyphslot_h_advance, 0);
@@ -3136,7 +3121,7 @@ void Init_ft2(void) {
 
   rb_define_method(cGlyph, "transform", ft_glyph_transform, 2);
 
-  rb_define_method(cGlyph, "cbox", ft_glyph_cbox, 2);
+  rb_define_method(cGlyph, "cbox", ft_glyph_cbox, 1);
   rb_define_alias(cGlyph, "control_box", "cbox");
 
   rb_define_method(cGlyph, "to_bmap", ft_glyph_to_bmap, 3);
