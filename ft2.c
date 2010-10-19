@@ -803,7 +803,7 @@ static VALUE ft_face_available_sizes(VALUE self) {
   FT_Face *face;
   Data_Get_Struct(self, FT_Face, face);
   /* FIXME!! */
-  return INT2FIX((int) (*face)->available_sizes);
+  return INT2FIX((*face)->available_sizes);
 }
 
 /*
