@@ -1,17 +1,14 @@
-FT2-Ruby 0.1.0 README
-=====================
+FT2-Ruby
+========
 
 This document was last updated on Sat Nov 16 17:51:41 2002.  Please see
 http://www.pablotron.org/software/ft2-ruby/ for the latest version of
 this software.
 
-Introduction
+Installation
 ============
-hum de dum dum
 
-Installing FT2-Ruby
-===================
-blah de blah blah
+    gem install ft2-ruby
 
 About the Author
 ================

@@ -7,4 +7,3 @@ $LDFLAGS << ' ' << `#{ft2_config} --libs`.chomp
 
 have_library("freetype", "FT_Init_FreeType") and
   create_makefile("ft2")
-

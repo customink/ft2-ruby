@@ -153,7 +153,7 @@ static VALUE ft_bitmap_width(VALUE self) {
  *
  * Return the pitch (bytes per row, including alignment padding) of an
  * FT2::Bitmap object.
- * 
+ *
  * Examples:
  *   width = bitmap.width
  *
@@ -348,7 +348,7 @@ VALUE ft_face_new(int argc, VALUE *argv, VALUE klass) {
   }
 
   face = malloc(sizeof(FT_Face));
-  err = FT_New_Face(*lib, RSTRING(path)->ptr, face_index, face);
+  err = FT_New_Face(*lib, RSTRING_PTR(path), face_index, face);
   if (err != FT_Err_Ok)
     handle_error(err);
 
@@ -391,18 +391,18 @@ VALUE ft_face_new_from_memory(int argc, VALUE *argv, VALUE klass) {
   lib = &library;
   switch (argc) {
     case 2:
-      mem = RSTRING(argv[0])->ptr;
+      mem = RSTRING_PTR(argv[0]);
       len = NUM2INT(argv[1]);
       face_index = 0;
       break;
     case 3:
       if (rb_obj_is_kind_of(argv[0], rb_cString)) {
-        mem = RSTRING(argv[0])->ptr;
+        mem = RSTRING_PTR(argv[0]);
         len = NUM2INT(argv[1]);
         face_index = NUM2INT(argv[2]);
       } else if (rb_obj_is_kind_of(argv[0], cLibrary)) {
         Data_Get_Struct(argv[0], FT_Library, lib);
-        mem = RSTRING(argv[1])->ptr;
+        mem = RSTRING_PTR(argv[1]);
         len = NUM2INT(argv[2]);
         face_index = 0;
       } else {
@@ -411,7 +411,7 @@ VALUE ft_face_new_from_memory(int argc, VALUE *argv, VALUE klass) {
       break;
     case 4:
       Data_Get_Struct(argv[0], FT_Library, lib);
-      mem = RSTRING(argv[1])->ptr;
+      mem = RSTRING_PTR(argv[1]);
       len = NUM2INT(argv[2]);
       face_index = NUM2INT(argv[3]);
       break;
@@ -511,7 +511,7 @@ static VALUE ft_face_index(VALUE self) {
  *   FT2::Face#kerning?
  *   FT2::Face#external_stream?
  *   FT2::Face#fast_glyphs?
- * 
+ *
  * Aliases:
  *   FT2::Face#face_flags
  *
@@ -540,7 +540,7 @@ static VALUE ft_face_flag_scalable(VALUE self) {
   return ((*face)->face_flags & FT_FACE_FLAG_SCALABLE) ? Qtrue : Qfalse;
 }
 
-/* 
+/*
  * Does this FT2::Face contain bitmap strikes for some pixel sizes?
  *
  * Examples:
@@ -567,7 +567,7 @@ static VALUE ft_face_flag_fixed_width(VALUE self) {
 }
 
 /*
- * Does this FT2::Face contain horizontal glyph metrics? 
+ * Does this FT2::Face contain horizontal glyph metrics?
  *
  * Note:
  *   This flag is true for virtually all fonts.
@@ -583,7 +583,7 @@ static VALUE ft_face_flag_horizontal(VALUE self) {
 }
 
 /*
- * Does this FT2::Face contain vertical glyph metrics? 
+ * Does this FT2::Face contain vertical glyph metrics?
  *
  * Note:
  *   If this flag is not set, the glyph loader will synthesize vertical
@@ -600,7 +600,7 @@ static VALUE ft_face_flag_vertical(VALUE self) {
 }
 
 /*
- * Is this FT2::Face stored in the 'sfnt' storage format? 
+ * Is this FT2::Face stored in the 'sfnt' storage format?
  *
  * Note:
  *   This currently means the file was either TrueType or OpenType.
@@ -616,7 +616,7 @@ static VALUE ft_face_flag_sfnt(VALUE self) {
 }
 
 /*
- * Does this FT2::Face contain kerning information? 
+ * Does this FT2::Face contain kerning information?
  *
  * Examples:
  *   puts "face contains kerning information" if face.kerning?
@@ -642,11 +642,11 @@ static VALUE ft_face_flag_external_stream(VALUE self) {
 }
 
 /*
- * Does this FT2::Face contain fast glyphs? 
+ * Does this FT2::Face contain fast glyphs?
  *
  * Note:
  *   This flag is usually set for fixed-size formats like FNT.
- * 
+ *
  * Examples:
  *   puts "face contains fast glyphs" if face.fast_glyphs?
  *
@@ -687,7 +687,7 @@ static VALUE ft_face_style_flags(VALUE self) {
 }
 
 /*
- * Is this a bold FT2::Face? 
+ * Is this a bold FT2::Face?
  *
  * Examples:
  *   puts "bold face" if face.bold?
@@ -700,7 +700,7 @@ static VALUE ft_face_flag_bold(VALUE self) {
 }
 
 /*
- * Is this an italic FT2::Face? 
+ * Is this an italic FT2::Face?
  *
  * Examples:
  *   puts "italic face" if face.italic?
@@ -713,7 +713,7 @@ static VALUE ft_face_flag_italic(VALUE self) {
 }
 
 /*
- * Return the number of glyphs in an FT2::Face object. 
+ * Return the number of glyphs in an FT2::Face object.
  *
  * Aliases:
  *   FT2::Face#num_glyphs
@@ -730,15 +730,15 @@ static VALUE ft_face_glyphs(VALUE self) {
 }
 
 /*
- * Return the family name of an FT2::Face object. 
+ * Return the family name of an FT2::Face object.
  *
- * Description: 
+ * Description:
  *   This is an ASCII string, usually in English, which describes the
  *   FT2::Face object's family (eg "Times New Roman" or "Geneva"). Some
  *   formats (eg Truetype and OpenType) provide localized and Unicode
  *   versions of this string, which are accessable via the format specific
  *   interfaces.
- * 
+ *
  * Examples:
  *   puts 'family: ' << face.family
  *
@@ -750,13 +750,13 @@ static VALUE ft_face_family(VALUE self) {
 }
 
 /*
- * Return the style name of an FT2::Face object. 
+ * Return the style name of an FT2::Face object.
  *
  * Description:
  *   This is an ASCII string, usually in English, which describes the
  *   FT2::Face object's style (eg "Bold", "Italic", "Condensed", etc).
  *   This field is optional and may be set to nil.
- * 
+ *
  * Examples:
  *   puts 'style: ' << face.style if face.style
  *
@@ -770,12 +770,12 @@ static VALUE ft_face_style(VALUE self) {
 }
 
 /*
- * Return the number of fixed sizes in an FT2::Face object. 
+ * Return the number of fixed sizes in an FT2::Face object.
  *
  * Note:
  *   This should be set to 0 for scalable fonts, unless the FT2::Face
  *   object contains a complete set of glyphs for the specified size.
- * 
+ *
  * Aliases:
  *   FT2::Face#num_fixed_sizes
  *
@@ -790,11 +790,11 @@ static VALUE ft_face_fixed_sizes(VALUE self) {
 }
 
 /*
- * Return an array of sizes in an FT2::Face object. 
+ * Return an array of sizes in an FT2::Face object.
  *
  * Note:
  *   This method does not currently work..
- * 
+ *
  * Examples:
  *   face.available_sizesdflksjaflksdjf FIXME
  *
@@ -821,7 +821,7 @@ static VALUE ft_face_num_charmaps(VALUE self) {
 
 /*
  * Return an array of charmaps in an FT2::Face object.
- * 
+ *
  * Note:
  *   This method may not work correctly at the moment (FIXME).
  *
@@ -840,13 +840,13 @@ static VALUE ft_face_charmaps(VALUE self) {
   ary = rb_ary_new();
   for (i = 0; i < (*face)->num_charmaps; i++)
     rb_ary_push(ary, INT2FIX(i));
-  
+
   return ary;
 }
 
 /*
  * Return the bounding box of an FT2::Face object.
- * 
+ *
  * Note:
  *   This method is not currently implemented (FIXME).
  *
@@ -863,7 +863,7 @@ static VALUE ft_face_bbox(VALUE self) {
 
 /*
  * Return the number of font units per EM for this FT2::Face object.
- * 
+ *
  * Description:
  *   This value is typically 2048 for TrueType fonts, 1000 for Type1
  *   fonts, and should be set to the (unrealistic) value 1 for
@@ -884,7 +884,7 @@ static VALUE ft_face_units_per_em(VALUE self) {
 
 /*
  * Return the ascender for this FT2::Face object.
- * 
+ *
  * Description:
  *   An FT2::Face object's ascender is the vertical distance, in font
  *   units, from the baseline to the topmost point of any glyph in the
@@ -902,7 +902,7 @@ static VALUE ft_face_ascender(VALUE self) {
 
 /*
  * Return the descender for this FT2::Face object.
- * 
+ *
  * Description:
  *   An FT2::Face object's descender is the vertical distance, in font
  *   units, from the baseline to the bottommost point of any glyph in
@@ -920,7 +920,7 @@ static VALUE ft_face_descender(VALUE self) {
 
 /*
  * Return the height of this FT2::Face object.
- * 
+ *
  * Description:
  *   An FT2::Face object's height is the vertical distance, in font
  *   units, from the baseline of one line to the baseline of the next.
@@ -939,7 +939,7 @@ static VALUE ft_face_height(VALUE self) {
 
 /*
  * Return the maximal advance width of this FT2::Face object.
- * 
+ *
  * Description:
  *   The maximal advance width, in font units, for all glyphs in this
  *   FT2::Face object.  This can be used to make word-wrapping
@@ -957,7 +957,7 @@ static VALUE ft_face_max_advance_width(VALUE self) {
 
 /*
  * Return the maximal advance height of this FT2::Face object.
- * 
+ *
  * Description:
  *   The maximal advance height, in font units, for all glyphs in this
  *   FT2::Face object.  This can be used to make word-wrapping
@@ -975,7 +975,7 @@ static VALUE ft_face_max_advance_height(VALUE self) {
 
 /*
  * Return the underline position of this FT2::Face object.
- * 
+ *
  * Description:
  *   The position, in font units, of the underline line for this face.
  *   It's the center of the underlining stem. Only relevant for scalable
@@ -993,7 +993,7 @@ static VALUE ft_face_underline_position(VALUE self) {
 
 /*
  * Return the underline thickness of this FT2::Face object.
- * 
+ *
  * Description:
  *  The thickness, in font units, of the underline for this face. Only
  *  relevant for scalable formats.
@@ -1009,7 +1009,7 @@ static VALUE ft_face_underline_thickness(VALUE self) {
 }
 /*
  * Return the glyph slot associated with this FT2::Face object.
- * 
+ *
  * Description:
  *  The face's associated glyph slot(s) (a FT2::GlyphSlot). This object
  *  is created automatically with a new FT2::Face object. However,
@@ -1024,7 +1024,7 @@ static VALUE ft_face_glyph(VALUE self) {
   FT_Face *face;
   Data_Get_Struct(self, FT_Face, face);
 
-  if ((*face)->glyph) 
+  if ((*face)->glyph)
     return Data_Wrap_Struct(cGlyphSlot, 0, dont_free, &((*face)->glyph));
   else
     return Qnil;
@@ -1032,7 +1032,7 @@ static VALUE ft_face_glyph(VALUE self) {
 
 /*
  * Return the current active size of this FT2::Face object.
- * 
+ *
  * Examples:
  *   size = face.size
  *
@@ -1041,7 +1041,7 @@ static VALUE ft_face_size(VALUE self) {
   FT_Face *face;
   Data_Get_Struct(self, FT_Face, face);
 
-  if ((*face)->size) 
+  if ((*face)->size)
     return Data_Wrap_Struct(cSize, 0, dont_free, (*face)->size);
   else
     return Qnil;
@@ -1049,7 +1049,7 @@ static VALUE ft_face_size(VALUE self) {
 
 /*
  * Return the current active FT2::CharMap of this FT2::Face object.
- * 
+ *
  * Examples:
  *   size = face.size
  *
@@ -1058,13 +1058,13 @@ static VALUE ft_face_charmap(VALUE self) {
   FT_Face *face;
   Data_Get_Struct(self, FT_Face, face);
 
-  if ((*face)->charmap) 
+  if ((*face)->charmap)
     return Data_Wrap_Struct(cCharMap, 0, dont_free, (*face)->charmap);
   else
     return Qnil;
 }
 
-/* 
+/*
  * Attach a font file to this FT2::Face object.
  *
  * Description:
@@ -1088,12 +1088,12 @@ static VALUE ft_face_attach(VALUE self, VALUE path) {
   FT_Face *face;
   FT_Error err;
   Data_Get_Struct(self, FT_Face, face);
-  if ((err = FT_Attach_File(*face, RSTRING(path)->ptr)) != FT_Err_Ok)
+  if ((err = FT_Attach_File(*face, RSTRING_PTR(path))) != FT_Err_Ok)
     handle_error(err);
   return self;
 }
 
-/* 
+/*
  * Set the character dimensions of this FT2::Face object.
  *
  * Description:
@@ -1122,7 +1122,7 @@ static VALUE ft_face_set_char_size(VALUE self, VALUE c_w, VALUE c_h, VALUE h_r, 
   return self;
 }
 
-/* 
+/*
  * Set the character dimensions of this FT2::Face object.
  *
  * Description:
@@ -1131,7 +1131,7 @@ static VALUE ft_face_set_char_size(VALUE self, VALUE c_w, VALUE c_h, VALUE h_r, 
  *
  *   If one of the character dimensions is zero, its value is set equal
  *   to the other.
- *    
+ *
  *   The values of `pixel_width' and `pixel_height' correspond to the
  *   pixel values of the typographic character size, which are NOT
  *   necessarily the same as the dimensions of the glyph `bitmap cells'.
@@ -1143,7 +1143,7 @@ static VALUE ft_face_set_char_size(VALUE self, VALUE c_w, VALUE c_h, VALUE h_r, 
  *   This means that setting the pixel size to, say, 8x8 doesn't
  *   guarantee in any way that you will get glyph bitmaps that all fit
  *   within an 8x8 cell (sometimes even far from it).
- *   
+ *
  * Examples:
  *   face.set_pixel_sizes pixel_width, pixel_height
  *
@@ -1158,18 +1158,18 @@ static VALUE ft_face_set_pixel_sizes(VALUE self, VALUE pixel_w, VALUE pixel_h) {
   return self;
 }
 
-/* 
+/*
  * Set the pre-render transoformation matrix and vector of a FT2::Face object.
  *
  * Description:
  *   Used to set the transformation that is applied to glyph images just
  *   before they are converted to bitmaps in a FT2::GlyphSlot when
  *   FT2::GlyphSlot#render is called.
- *   
+ *
  *   matrix: The transformation's 2x2 matrix. Use nil for the identity
  *           matrix.
  *   delta: The translation vector. Use nil for the null vector.
- *     
+ *
  * Note:
  *   The transformation is only applied to scalable image formats after
  *   the glyph has been loaded. It means that hinting is unaltered by
@@ -1219,7 +1219,7 @@ static VALUE ft_face_set_transform(VALUE self, VALUE matrix, VALUE delta) {
 
 /*
  * Load a glyph at a given size into a glyph slot of a FT2::Face object.
- * 
+ *
  * Description:
  *   Load a glyph at a given size into a glyph slot of a FT2::Face
  *   object.
@@ -1255,7 +1255,7 @@ static VALUE ft_face_set_transform(VALUE self, VALUE matrix, VALUE delta) {
  *   FT2::Load::FORCE_AUTOHINT
  *   FT2::Load::NO_RECURSE
  *   FT2::Load::PEDANTIC
- *     
+ *
  * Examples:
  *   face.load_glyph 5, FT2::Load::DEFAULT
  *
@@ -1267,7 +1267,7 @@ static VALUE ft_face_load_glyph(VALUE self, VALUE glyph_index, VALUE flags) {
   Data_Get_Struct(self, FT_Face, face);
   if (flags == Qnil)
     flags = INT2FIX(FT_LOAD_DEFAULT);
-  
+
   err = FT_Load_Glyph(*face, NUM2INT(glyph_index), NUM2INT(flags));
   if (err != FT_Err_Ok)
     handle_error(err);
@@ -1277,11 +1277,11 @@ static VALUE ft_face_load_glyph(VALUE self, VALUE glyph_index, VALUE flags) {
 
 /*
  * Load a glyph at a given size into a glyph slot of a FT2::Face object.
- * 
+ *
  * Description:
  *   Load a glyph at a given size into a glyph slot of a FT2::Face
  *   object according to its character code.
- *   
+ *
  *   char_code: The glyph's character code, according to the current
  *              charmap used in the FT2::Face object.
  *   load_flags: A flag indicating what to load for this glyph. The
@@ -1289,7 +1289,7 @@ static VALUE ft_face_load_glyph(VALUE self, VALUE glyph_index, VALUE flags) {
  *               glyph loading process (e.g., whether the outline should
  *               be scaled, whether to load bitmaps or not, whether to
  *               hint the outline, etc).
- *     
+ *
  * Note:
  *   If the face has no current charmap, or if the character code is not
  *   defined in the charmap, this function will return an error.
@@ -1317,7 +1317,7 @@ static VALUE ft_face_load_glyph(VALUE self, VALUE glyph_index, VALUE flags) {
  *   FT2::Load::FORCE_AUTOHINT
  *   FT2::Load::NO_RECURSE
  *   FT2::Load::PEDANTIC
- *     
+ *
  * Examples:
  *   face.load_char 5, FT2::Load::DEFAULT
  *
@@ -1342,9 +1342,9 @@ static VALUE ft_face_load_char(VALUE self, VALUE char_code, VALUE flags) {
  *   the same as used in the font in case the font is based on glyph
  *   indices. Reason for this behaviour is to assure that index 0 is
  *   never used, representing the missing glyph.
- *    
+ *
  *   A return value of 0 means `undefined character code'.
- *   
+ *
  * Examples:
  *   index = face.char_index 65
  *   puts 'undefined character code' if index == 0
@@ -1356,22 +1356,22 @@ static VALUE ft_face_char_index(VALUE self, VALUE char_code) {
   return INT2FIX(FT_Get_Char_Index(*face, NUM2INT(char_code)));
 }
 
-/* 
+/*
  * Get the glyph index of a given glyph name.
  *
- * Note: 
+ * Note:
  *   This method uses driver specific objects to do the translation.
  *
  *   A return value of 0 means `undefined character code'.
  *
  * Examples:
  *   index = face.name_index glyph_name
- *   
+ *
  */
 static VALUE ft_face_name_index(VALUE self, VALUE glyph_name) {
   FT_Face *face;
   Data_Get_Struct(self, FT_Face, face);
-  return INT2FIX(FT_Get_Name_Index(*face, RSTRING(glyph_name)->ptr));
+  return INT2FIX(FT_Get_Name_Index(*face, RSTRING_PTR(glyph_name)));
 }
 
 /*
@@ -1379,14 +1379,14 @@ static VALUE ft_face_name_index(VALUE self, VALUE glyph_name) {
  *
  * Description:
  *   Get the kerning vector between two glyphs of a FT2::Face object.
- *   
+ *
  *   left_glyph: The index of the left glyph in the kern pair.
  *   right_glyph: The index of the right glyph in the kern pair.
  *   kern_mode: One of the FT2::KerningMode::XXXX constants. Determines
  *              the scale/dimension of the returned kerning vector.
- *   
+ *
  *   Passing kern_mode == nil is the same as FT2::KerningMode::DEFAULT.
- *   
+ *
  *   Returns a kerning vector (actually a two-element array). This is in
  *   font units for scalable formats, and in pixels for fixed-sizes
  *   formats.
@@ -1416,21 +1416,21 @@ static VALUE ft_face_kerning(VALUE self, VALUE left_glyph, VALUE right_glyph, VA
 
   if (kern_mode == Qnil)
     kern_mode = NUM2INT(ft_kerning_default);
-  
+
   err = FT_Get_Kerning(*face, NUM2INT(left_glyph), NUM2INT(right_glyph), NUM2INT(kern_mode), &v);
   if (err != FT_Err_Ok)
     handle_error(err);
 
   rb_ary_push(ary, INT2FIX(v.x));
   rb_ary_push(ary, INT2FIX(v.y));
-  
+
   return ary;
 }
 
 /*
  * Get the ASCII name of a glyph in a FT2::Face object.
  *
- * Note: 
+ * Note:
  *   If the face doesn't provide glyph names or if the glyph index is
  *   invalid, nil is returned.  The glyph name is truncated if it is
  *   longer than 1024 characters.
@@ -1455,7 +1455,7 @@ static VALUE ft_face_glyph_name(VALUE self, VALUE glyph_index) {
 /*
  * Get the ASCII Postscript name of a FT2::Face object.
  *
- * Note: 
+ * Note:
  *   This should only work with Postscript and TrueType fonts. If the
  *   PostScript name is un-avaialble, nil is returned.
  *
@@ -1468,7 +1468,7 @@ static VALUE ft_face_ps_name(VALUE self) {
   FT_Face *face;
   const char *str;
   Data_Get_Struct(self, FT_Face, face);
-  
+
   if ((str = FT_Get_Postscript_Name(*face)) != NULL)
     return rb_str_new2(str);
   else
@@ -1523,11 +1523,11 @@ static VALUE ft_face_set_charmap(VALUE self, VALUE charmap) {
 
 /*
  * Return the first character code of the selected charmap and corresponding glyph index of a FT2::Face object.
- * 
+ *
  * Note:
  *   Using this with FT2::Face#next_char will allow you to iterate
  *   through the charmap => glyph index mapping for the selected
- *   charmap.  
+ *   charmap.
  *
  *   You should probably use the method FT2::Face#current_charmap
  *   instead.
@@ -1557,7 +1557,7 @@ static VALUE ft_face_first_char(VALUE self) {
 
 /*
  * Return the next character code of the selected charmap and corresponding glyph index of a FT2::Face object.
- * 
+ *
  * Note:
  *   Using this with FT2::Face#first_char will allow you to iterate
  *   through the charmap => glyph index mapping for the selected
@@ -1592,7 +1592,7 @@ static VALUE ft_face_next_char(VALUE self, VALUE char_code) {
 
 /*
  * Return the character code to glyph index map of the selected charmap of a FT2::Face object.
- * 
+ *
  * Note:
  *   Returns nil if the selected charmap is empty.
  *
@@ -1618,7 +1618,7 @@ static VALUE ft_face_current_charmap(VALUE self) {
     rb_hash_aset(rtn, UINT2NUM(c_code), UINT2NUM(g_idx));
     c_code = FT_Get_Next_Char(*face, c_code, &g_idx);
   }
-  
+
   return rtn;
 }
 
@@ -1639,13 +1639,13 @@ static VALUE ft_glyphmetrics_init(VALUE self) {
   return self;
 }
 
-/* 
+/*
  * Get the glyph's width.
  *
- * Note: 
+ * Note:
  *   Values are expressed in 26.6 fractional pixel format or in font
  *   units, depending on context.
- * 
+ *
  * Aliases:
  *   FT2::GlyphMetrics#w
  *
@@ -1660,13 +1660,13 @@ static VALUE ft_glyphmetrics_width(VALUE self) {
   return INT2NUM(glyph->width);
 }
 
-/* 
+/*
  * Get the glyph's height.
  *
- * Note: 
+ * Note:
  *   Values are expressed in 26.6 fractional pixel format or in font
  *   units, depending on context.
- * 
+ *
  * Aliases:
  *   FT2::GlyphMetrics#h
  *
@@ -1681,13 +1681,13 @@ static VALUE ft_glyphmetrics_height(VALUE self) {
   return INT2NUM(glyph->height);
 }
 
-/* 
+/*
  * Get the glyph's left side bearing in horizontal layouts.
  *
- * Note: 
+ * Note:
  *   Values are expressed in 26.6 fractional pixel format or in font
  *   units, depending on context.
- * 
+ *
  * Aliases:
  *   FT2::GlyphMetrics#horiBearingX
  *   FT2::GlyphMetrics#h_bear_x
@@ -1706,13 +1706,13 @@ static VALUE ft_glyphmetrics_h_bear_x(VALUE self) {
   return INT2NUM(glyph->horiBearingX);
 }
 
-/* 
+/*
  * Get the glyph's top side bearing in horizontal layouts.
  *
- * Note: 
+ * Note:
  *   Values are expressed in 26.6 fractional pixel format or in font
  *   units, depending on context.
- * 
+ *
  * Aliases:
  *   FT2::GlyphMetrics#horiBearingY
  *   FT2::GlyphMetrics#h_bear_y
@@ -1731,13 +1731,13 @@ static VALUE ft_glyphmetrics_h_bear_y(VALUE self) {
   return INT2NUM(glyph->horiBearingY);
 }
 
-/* 
+/*
  * Get the glyph's advance width for horizontal layouts.
  *
- * Note: 
+ * Note:
  *   Values are expressed in 26.6 fractional pixel format or in font
  *   units, depending on context.
- * 
+ *
  * Aliases:
  *   FT2::GlyphMetrics#horiAdvance
  *   FT2::GlyphMetrics#ha
@@ -1754,13 +1754,13 @@ static VALUE ft_glyphmetrics_h_advance(VALUE self) {
   return INT2NUM(glyph->horiAdvance);
 }
 
-/* 
+/*
  * Get the glyph's left side bearing in vertical layouts.
  *
- * Note: 
+ * Note:
  *   Values are expressed in 26.6 fractional pixel format or in font
  *   units, depending on context.
- * 
+ *
  * Aliases:
  *   FT2::GlyphMetrics#vertBearingX
  *   FT2::GlyphMetrics#v_bear_x
@@ -1779,13 +1779,13 @@ static VALUE ft_glyphmetrics_v_bear_x(VALUE self) {
   return INT2NUM(glyph->vertBearingX);
 }
 
-/* 
+/*
  * Get the glyph's top side bearing in vertical layouts.
  *
- * Note: 
+ * Note:
  *   Values are expressed in 26.6 fractional pixel format or in font
  *   units, depending on context.
- * 
+ *
  * Aliases:
  *   FT2::GlyphMetrics#vertBearingY
  *   FT2::GlyphMetrics#v_bear_y
@@ -1804,13 +1804,13 @@ static VALUE ft_glyphmetrics_v_bear_y(VALUE self) {
   return INT2NUM(glyph->vertBearingY);
 }
 
-/* 
+/*
  * Get the glyph's advance width for vertical layouts.
  *
- * Note: 
+ * Note:
  *   Values are expressed in 26.6 fractional pixel format or in font
  *   units, depending on context.
- * 
+ *
  * Aliases:
  *   FT2::GlyphMetrics#vertAdvance
  *   FT2::GlyphMetrics#va
@@ -1863,7 +1863,7 @@ static VALUE ft_glyphslot_init(VALUE self) {
  * Render Modes:
  *   FT2::RenderMode::NORMAL
  *   FT2::RenderMode::MONO
- *   
+ *
  * Examples:
  *   slot.render FT2::RenderMode::NORMAL
  *
@@ -1875,7 +1875,7 @@ static VALUE ft_glyphslot_render(VALUE self, VALUE render_mode) {
   Data_Get_Struct(self, FT_GlyphSlot, glyph);
   if (render_mode == Qnil)
     render_mode = INT2FIX(ft_render_mode_normal);
-  
+
   err = FT_Render_Glyph(*glyph, NUM2INT(render_mode));
   if (err != FT_Err_Ok)
     handle_error(err);
@@ -1931,7 +1931,7 @@ static VALUE ft_glyphslot_face(VALUE self) {
   Data_Get_Struct(self, FT_GlyphSlot, glyph);
   face = malloc(sizeof(FT_Face));
   *face = (*glyph)->face;
-  
+
   /* do we really want to dont_free() cb here? */
   return Data_Wrap_Struct(cFace, 0, dont_free, face);
 }
@@ -1956,7 +1956,7 @@ static VALUE ft_glyphslot_next(VALUE self) {
   Data_Get_Struct(self, FT_GlyphSlot, glyph);
   next = malloc(sizeof(FT_GlyphSlot));
   *next = (*glyph)->next;
-  
+
   /* do we really want to dont_free() cb here? */
   return Data_Wrap_Struct(cGlyphSlot, 0, dont_free, next);
 }
@@ -1975,7 +1975,7 @@ static VALUE ft_glyphslot_metrics(VALUE self) {
   Data_Get_Struct(self, FT_GlyphSlot, glyph);
   metrics = malloc(sizeof(FT_Glyph_Metrics));
   *metrics = (*glyph)->metrics;
-  
+
   return Data_Wrap_Struct(cGlyphMetrics, 0, dont_free, metrics);
 }
 
@@ -1987,7 +1987,7 @@ static VALUE ft_glyphslot_metrics(VALUE self) {
  *   horizontal advance width for the FT2:GlyphSlot (i.e. the scaled and
  *   unhinted value of the hori advance). This can be important to
  *   perform correct WYSIWYG layout.
- * 
+ *
  * Note:
  *   The return value is expressed by default in 16.16 pixels.  However,
  *   when the FT2::GlyphSlot is loaded with the FT2::Load::LINEAR_DESIGN
@@ -2018,7 +2018,7 @@ static VALUE ft_glyphslot_h_advance(VALUE self) {
  *   vertical advance height for the FT2:GlyphSlot (i.e. the scaled and
  *   unhinted value of the hori advance). This can be important to
  *   perform correct WYSIWYG layout.
- * 
+ *
  * Note:
  *   The return value is expressed by default in 16.16 pixels.  However,
  *   when the FT2::GlyphSlot is loaded with the FT2::Load::LINEAR_DESIGN
@@ -2093,14 +2093,14 @@ static VALUE ft_glyphslot_bitmap(VALUE self) {
   Data_Get_Struct(self, FT_GlyphSlot, glyph);
   bitmap = malloc(sizeof(FT_Bitmap));
   *bitmap = (*glyph)->bitmap;
-  
+
   return Data_Wrap_Struct(cBitmap, 0, dont_free, bitmap);
 }
 
 /*
  * Get the left bearing (in pixels) of a bitmap format FT2::GlyphSlot object.
  *
- * Note: 
+ * Note:
  *   Only valid if the format is FT2::GlyphFormat::BITMAP.
  *
  * Examples:
@@ -2116,7 +2116,7 @@ static VALUE ft_glyphslot_bitmap_left(VALUE self) {
 /*
  * Get the top bearing (in pixels) of a bitmap format FT2::GlyphSlot object.
  *
- * Note: 
+ * Note:
  *   Only valid if the format is FT2::GlyphFormat::BITMAP.  The value
  *   returned is the distance from the baseline to the topmost glyph
  *   scanline, upwards y-coordinates being positive.
@@ -2148,7 +2148,7 @@ static VALUE ft_glyphslot_outline(VALUE self) {
   Data_Get_Struct(self, FT_GlyphSlot, glyph);
   outline = malloc(sizeof(FT_Outline));
   *outline = (*glyph)->outline;
-  
+
   return Data_Wrap_Struct(cOutline, 0, dont_free, outline);
 }
 
@@ -2190,12 +2190,12 @@ static VALUE ft_glyphslot_subglyphs(VALUE self) {
 
   /* FIXME: this probably doesn't work */
   rtn = rb_ary_new();
-/* 
+/*
  *   for (i = 0; i < num; i++)
  *     rb_ary_push(rtn, Data_Wrap_Struct(cSubGlyph, 0,
  *                                       dont_free,
  *                                       (*glyph)->subglyphs[i]));
- */ 
+ */
   return rtn;
 }
 
@@ -2339,8 +2339,8 @@ static VALUE ft_size_metrics_y_ppem(VALUE self) {
  *
  * Description:
  *   Scale that is used to directly scale horizontal distances from
- *   design space to 1/64th of device pixels. 
- *   
+ *   design space to 1/64th of device pixels.
+ *
  * Examples:
  *   x_scale = face.size.metrics.x_scale
  *
@@ -2356,8 +2356,8 @@ static VALUE ft_size_metrics_x_scale(VALUE self) {
  *
  * Description:
  *   Scale that is used to directly scale vertical distances from
- *   design space to 1/64th of device pixels. 
- *   
+ *   design space to 1/64th of device pixels.
+ *
  * Examples:
  *   y_scale = face.size.metrics.y_scale
  *
@@ -2393,8 +2393,8 @@ static VALUE ft_glyph_init(VALUE self) {
 
 /*
  * Get the library of a FT2::Glyph object.
- * 
- * Note: 
+ *
+ * Note:
  *   Glyph objects are not owned or tracked by the library.
  *
  * Examples:
@@ -2409,7 +2409,7 @@ static VALUE ft_glyph_library(VALUE self) {
 
 /*
  * Get the FreeType2 class of a FT2::Glyph object.
- * 
+ *
  * Note:
  *   This is _not_ the Ruby class of the object.
  *
@@ -2428,7 +2428,7 @@ static VALUE ft_glyph_class(VALUE self) {
 
 /*
  * Get the format of a FT2::Glyph object's image.
- * 
+ *
  * Glyph Formats:
  *   FT2::GlyphFormat::COMPOSITE
  *   FT2::GlyphFormat::BITMAP
@@ -2447,7 +2447,7 @@ static VALUE ft_glyph_format(VALUE self) {
 
 /*
  * Get the advance of a FT2::Glyph object.
- * 
+ *
  * Description:
  *   This vector gives the FT2::Glyph object's advance width.
  *
@@ -2486,23 +2486,23 @@ static VALUE ft_glyph_dup(VALUE self) {
   err = FT_Glyph_Copy(*glyph, new_glyph);
   if (err != FT_Err_Ok)
     handle_error(err);
-  
+
   return Data_Wrap_Struct(cGlyph, 0, glyph_free, new_glyph);
 }
 
 /*
  * Transform a FT2::Glyph object if it's format is scalable.
- * 
+ *
  * Description:
  *   matrix: A pointer to a 2x2 matrix to apply.
  *   delta:  A pointer to a 2d vector to apply. Coordinates are
  *           expressed in 1/64th of a pixel.
- *     
+ *
  * Note:
  *   The transformation matrix is also applied to the glyph's advance
  *   vector.  This method returns an error if the glyph format is not
  *   scalable (eg, if it's not equal to zero).
- *     
+ *
  * Examples:
  *   matrix = [[1, 0],
  *             [0, 1]]
@@ -2528,7 +2528,7 @@ static VALUE ft_glyph_transform(VALUE self, VALUE matrix_ary, VALUE delta_ary) {
   err = FT_Glyph_Transform(*glyph, &matrix, &delta);
   if (err != FT_Err_Ok)
     handle_error(err);
-  
+
   return self;
 }
 
@@ -2546,7 +2546,7 @@ static VALUE ft_glyph_transform(VALUE self, VALUE matrix_ary, VALUE delta_ary) {
  *   box can take much more time as it needs to walk over all segments
  *   and arcs in the outline. To get the latter, you can use the
  *   `ftbbox' component which is dedicated to this single task.
- *    
+ *
  * Notes:
  *   Coordinates are relative to the FT2::Glyph object's origin, using
  *   the Y-upwards convention.
@@ -2579,7 +2579,7 @@ static VALUE ft_glyph_transform(VALUE self, VALUE matrix_ary, VALUE delta_ary) {
  *   to FT2::GlyphBBox::PIXELS.
  *
  *   The default value for `bbox_mode' is FT2::GlyphBBox::PIXELS.
- *    
+ *
  * Aliases:
  *   FT2::Glyph#control_box
  *
@@ -2601,7 +2601,7 @@ static VALUE ft_glyph_cbox(VALUE self, VALUE bbox_mode) {
   rb_ary_push(ary, INT2FIX(bbox.yMin));
   rb_ary_push(ary, INT2FIX(bbox.xMax));
   rb_ary_push(ary, INT2FIX(bbox.yMax));
-  
+
   return ary;
 }
 
@@ -2610,7 +2610,7 @@ static VALUE ft_glyph_cbox(VALUE self, VALUE bbox_mode) {
  *
  * Description:
  *   Converts a FT2::Glyph object to a FT2::BitmapGlyph object.
- *   
+ *
  *   render_mode: A set of bit flags that describe how the data is.
  *   origin:      A vector used to translate the glyph image before
  *                rendering. Can be nil (if no translation).  The
@@ -2618,7 +2618,7 @@ static VALUE ft_glyph_cbox(VALUE self, VALUE bbox_mode) {
  *   destroy:     A boolean that indicates that the original glyph
  *                image should be destroyed by this function. It is
  *                never destroyed in case of error.
- *       
+ *
  * Aliases:
  *   FT2::Glyph#to_bitmap
  *
@@ -2668,13 +2668,13 @@ static VALUE ft_bmapglyph_init(VALUE self) {
  *   The top-side bearing, i.e., the vertical distance from the current
  *   pen position to the top border of the glyph bitmap. This distance
  *   is positive for upwards-y.
- *   
+ *
  * Note:
  *   FT2::BitmapGlyph is a subclass of FT2::Glyph.
  *
  * Examples:
  *   y = bmap_glyph.top
- *   
+ *
  */
 static VALUE ft_bmapglyph_top(VALUE self) {
   FT_BitmapGlyph *glyph;
@@ -2688,13 +2688,13 @@ static VALUE ft_bmapglyph_top(VALUE self) {
  * Description:
  *   The left-side bearing, i.e., the horizontal distance from the
  *   current pen position to the left border of the glyph bitmap.
- *   
+ *
  * Note:
  *   FT2::BitmapGlyph is a subclass of FT2::Glyph.
  *
  * Examples:
  *   x = bmap_glyph.left
- *   
+ *
  */
 static VALUE ft_bmapglyph_left(VALUE self) {
   FT_BitmapGlyph *glyph;
@@ -2868,9 +2868,9 @@ void Init_ft2(void) {
   /* define FT2::VERSION */
   rb_define_const(mFt2, "VERSION", rb_str_new2(VERSION));
   rb_define_singleton_method(mFt2, "version", ft_version, 0);
-  
+
   define_constants();
-  
+
   /****************************/
   /* define FT2::Bitmap class */
   /****************************/
@@ -2902,10 +2902,10 @@ void Init_ft2(void) {
 
   rb_define_method(cFace, "faces", ft_face_faces, 0);
   rb_define_alias(cFace, "num_faces", "faces");
-  
+
   rb_define_method(cFace, "index", ft_face_index, 0);
   rb_define_alias(cFace, "face_index", "index");
-  
+
   rb_define_method(cFace, "flags", ft_face_flags, 0);
   rb_define_alias(cFace, "face_flags", "flags");
 
@@ -2920,7 +2920,7 @@ void Init_ft2(void) {
   rb_define_const(cFace, "GLYPH_NAMES", INT2FIX(FT_FACE_FLAG_GLYPH_NAMES));
   rb_define_const(cFace, "EXTERNAL_STREAM", INT2FIX(FT_FACE_FLAG_EXTERNAL_STREAM));
   rb_define_const(cFace, "FAST_GLYPHS", INT2FIX(FT_FACE_FLAG_FAST_GLYPHS));
-  
+
   rb_define_method(cFace, "scalable?", ft_face_flag_scalable, 0);
   rb_define_method(cFace, "fixed_sizes?", ft_face_flag_fixed_sizes, 0);
   rb_define_method(cFace, "fixed_width?", ft_face_flag_fixed_width, 0);
@@ -2930,15 +2930,15 @@ void Init_ft2(void) {
   rb_define_method(cFace, "kerning?", ft_face_flag_kerning, 0);
   rb_define_method(cFace, "external_stream?", ft_face_flag_external_stream, 0);
   rb_define_method(cFace, "fast_glyphs?", ft_face_flag_fast_glyphs, 0);
-  
+
   rb_define_method(cFace, "style_flags", ft_face_style_flags, 0);
-  
+
   rb_define_const(cFace, "BOLD", INT2FIX(FT_STYLE_FLAG_BOLD));
   rb_define_const(cFace, "ITALIC", INT2FIX(FT_STYLE_FLAG_ITALIC));
 
   rb_define_method(cFace, "bold?", ft_face_flag_bold, 0);
   rb_define_method(cFace, "italic?", ft_face_flag_italic, 0);
-  
+
   rb_define_method(cFace, "glyphs", ft_face_glyphs, 0);
   rb_define_alias(cFace, "num_glyphs", "glyphs");
 
@@ -2950,10 +2950,10 @@ void Init_ft2(void) {
 
   rb_define_method(cFace, "available_sizes", ft_face_available_sizes, 0);
   rb_define_alias(cFace, "num_available_sizes", "available_sizes");
-  
+
   rb_define_method(cFace, "num_charmaps", ft_face_num_charmaps, 0);
   rb_define_method(cFace, "charmaps", ft_face_charmaps, 0);
-  
+
   rb_define_method(cFace, "bbox", ft_face_bbox, 0);
 
   rb_define_method(cFace, "units_per_em", ft_face_units_per_em, 0);
@@ -2978,10 +2978,10 @@ void Init_ft2(void) {
 
   rb_define_method(cFace, "char_index", ft_face_char_index, 1);
   rb_define_method(cFace, "name_index", ft_face_name_index, 1);
-  
+
   rb_define_method(cFace, "kerning", ft_face_kerning, 3);
   rb_define_alias(cFace, "get_kerning", "kerning");
-  
+
   rb_define_method(cFace, "glyph_name", ft_face_glyph_name, 1);
   rb_define_method(cFace, "postscript_name", ft_face_ps_name, 0);
   rb_define_alias(cFace, "name", "postscript_name");
@@ -2989,12 +2989,12 @@ void Init_ft2(void) {
   rb_define_method(cFace, "select_charmap", ft_face_select_charmap, 1);
   rb_define_method(cFace, "set_charmap", ft_face_set_charmap, 1);
   rb_define_alias(cFace, "charmap=", "set_charmap");
-  
+
   rb_define_method(cFace, "first_char", ft_face_first_char, 0);
   rb_define_method(cFace, "next_char", ft_face_next_char, 1);
-  
+
   rb_define_method(cFace, "current_charmap", ft_face_current_charmap, 0);
-  
+
   rb_define_method(cFace, "set_char_size", ft_face_set_char_size, 4);
   rb_define_method(cFace, "set_pixel_sizes", ft_face_set_pixel_sizes, 2);
   rb_define_method(cFace, "set_transform", ft_face_set_transform, 2);
@@ -3054,7 +3054,7 @@ void Init_ft2(void) {
   rb_define_alias(cGlyphSlot, "linearVertAdvance", "h_advance");
   rb_define_alias(cGlyphSlot, "v_adv", "h_advance");
   rb_define_alias(cGlyphSlot, "va", "h_advance");
-  
+
   rb_define_method(cGlyphSlot, "advance", ft_glyphslot_advance, 0);
   rb_define_method(cGlyphSlot, "format", ft_glyphslot_format, 0);
   rb_define_method(cGlyphSlot, "bitmap", ft_glyphslot_bitmap, 0);
@@ -3065,7 +3065,7 @@ void Init_ft2(void) {
   rb_define_method(cGlyphSlot, "subglyphs", ft_glyphslot_subglyphs, 0);
   rb_define_method(cGlyphSlot, "control_data", ft_glyphslot_control_data, 0);
   rb_define_method(cGlyphSlot, "control_len", ft_glyphslot_control_len, 0);
-  
+
   rb_define_method(cGlyphSlot, "render", ft_glyphslot_render, 1);
   rb_define_alias(cGlyphSlot, "render_glyph", "render");
 
@@ -3076,12 +3076,12 @@ void Init_ft2(void) {
   /* define FT2::Library class */
   /*****************************/
   cLibrary = rb_define_class_under(mFt2, "Library", rb_cObject);
-  
+
   /****************************/
   /* define FT2::Memory class */
   /****************************/
   cMemory = rb_define_class_under(mFt2, "Memory", rb_cObject);
-  
+
   /*****************************/
   /* define FT2::Outline class */
   /*****************************/
