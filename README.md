@@ -1,16 +1,15 @@
-FT2-Ruby
-========
+# FT2-Ruby #
 
-This document was last updated on Sat Nov 16 17:51:41 2002.  Please see
-http://www.pablotron.org/software/ft2-ruby/ for the latest version of
-this software.
+This gem provides [FreeType2](http://www.freetype.org/) bindings for Ruby.
 
-Installation
-============
+## Installation ##
 
     gem install ft2-ruby
 
-About the Author
-================
-Paul Duncan <pabs@pablotron.org>
+## About the Author ##
+Paul Duncan <pabs@pablotron.org>  
 http://www.pablotron.org/
+
+Maintained by [CustomInk](http://technology.customink.com/)
+
+
