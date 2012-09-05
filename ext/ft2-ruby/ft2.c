@@ -29,7 +29,6 @@
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 
-#define VERSION "0.1.0"
 #define UNUSED(a) ((void) (a))
 #define ABS(a) (((a) < 0) ? -(a) : (a))
 
@@ -2865,8 +2864,6 @@ void Init_ft2(void) {
   /* define top-level FT2 module */
   mFt2 = rb_define_module("FT2");
 
-  /* define FT2::VERSION */
-  rb_define_const(mFt2, "VERSION", rb_str_new2(VERSION));
   rb_define_singleton_method(mFt2, "version", ft_version, 0);
 
   define_constants();
