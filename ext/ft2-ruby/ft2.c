@@ -47,6 +47,8 @@ static VALUE mFt2,
              mPixelMode,
              mRenderMode,
 
+             eFt2Error,
+
              cBitmap,
              cBitmapGlyph,
              cCharMap,
@@ -83,9 +85,9 @@ static void handle_error(FT_Error err) {
 
   for (i = 0; ((unsigned int) i) < sizeof(errors) / sizeof(errors[0]); i++)
     if (err == errors[i].code)
-      rb_raise(rb_eException, "FreeType2 Error: %s.", errors[i].str);
+      rb_raise(eFt2Error, "FreeType2 Error: %s.", errors[i].str);
 
-  rb_raise(rb_eException, "FreeType2 Error: Unknown error %d.", err);
+  rb_raise(eFt2Error, "FreeType2 Error: Unknown error %d.", err);
 }
 
 static double ft_fixed_to_double(FT_Fixed fixed) {
@@ -2863,6 +2865,8 @@ void Init_ft2(void) {
 
   /* define top-level FT2 module */
   mFt2 = rb_define_module("FT2");
+
+  eFt2Error = rb_define_class_under(mFt2, "Error", rb_eStandardError);
 
   rb_define_singleton_method(mFt2, "version", ft_version, 0);
 
