@@ -15,4 +15,5 @@ Gem::Specification.new do |gem|
   gem.name          = "ft2-ruby"
   gem.require_paths = ["lib"]
   gem.version       = FT2::VERSION
+  gem.license       = "MIT"
 end
