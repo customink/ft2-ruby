@@ -1,5 +1,9 @@
 # ft2-ruby changelog #
 
+## 1.0.0 ##
+### Wed Nov 20 13:28:20 2013 by [mpeteuil](http://www.github.com/mpeteuil) ###
+- Now raises FT2::Error instead of Exception
+
 ## 0.1.4 ##
 ### Fri Apr 27 11:39:28 2012 by [sethvargo](http://www.github.com/sethvargo) ###
 - Added MIT license
