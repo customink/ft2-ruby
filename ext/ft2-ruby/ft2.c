@@ -28,6 +28,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
+#include FT_OUTLINE_H
 
 #define UNUSED(a) ((void) (a))
 #define ABS(a) (((a) < 0) ? -(a) : (a))
@@ -68,6 +69,7 @@ static VALUE mFt2,
 
 static void face_free(void *ptr);
 static void glyph_free(void *ptr);
+static void outline_free(void *ptr);
 
 static void dont_free(void *ptr) { UNUSED(ptr); }
 
@@ -1450,7 +1452,7 @@ static VALUE ft_face_glyph_name(VALUE self, VALUE glyph_index) {
   if (err != FT_Err_Ok)
     handle_error(err);
 
-  return (buf && strlen(buf)) ? rb_str_new2(buf) : Qnil;
+  return strlen(buf) ? rb_str_new2(buf) : Qnil;
 }
 
 /*
@@ -2150,7 +2152,7 @@ static VALUE ft_glyphslot_outline(VALUE self) {
   outline = malloc(sizeof(FT_Outline));
   *outline = (*glyph)->outline;
 
-  return Data_Wrap_Struct(cOutline, 0, dont_free, outline);
+  return Data_Wrap_Struct(cOutline, 0, outline_free, outline);
 }
 
 /*
@@ -2160,7 +2162,7 @@ static VALUE ft_glyphslot_outline(VALUE self) {
  *   Only valid if the format is FT2::GlyphFormat::COMPOSITE.
  *
  * Examples:
- *   outline = slot.outline
+ *   num_subglyphs = slot.num_subglyphs
  *
  */
 static VALUE ft_glyphslot_num_subglyphs(VALUE self) {
@@ -2231,6 +2233,147 @@ static VALUE ft_glyphslot_control_len(VALUE self) {
   return INT2NUM((*glyph)->control_len);
 }
 
+/*********************/
+/* FT2::Outline methods */
+/*********************/
+static void outline_free(void *ptr) {
+  FT_Error err;
+  if ((err = FT_Outline_Done(library, ptr)) != FT_Err_Ok)
+    handle_error(err);
+  free(ptr);
+}
+
+/*
+ * Constructor for FT2::Size class.
+ *
+ * This method is currently empty.  You should never call this method
+ * directly unless you're instantiating a derived class (ie, you know
+ * what you're doing).
+ *
+ */
+static VALUE ft_outline_init(VALUE self) {
+  return self;
+}
+
+/*
+ * Get the number of contours in the outline
+ *
+ * Example:
+ *   num_contours = outline.n_contours
+ */
+static VALUE ft_outline_n_contours(VALUE self) {
+  FT_Outline *outline;
+  Data_Get_Struct(self, FT_Outline, outline);
+  return INT2NUM((int) outline->n_contours);
+}
+
+/*
+ * Get the number of points in the outline
+ *
+ * Example:
+ *   num_points = outline.n_points
+ */
+static VALUE ft_outline_n_points(VALUE self) {
+  FT_Outline *outline;
+  Data_Get_Struct(self, FT_Outline, outline);
+  return INT2NUM((int) outline->n_points);
+}
+
+/*
+ * Get the outline's point coordinates. This is
+ * an array of FT_Vectors
+ *
+ * Example:
+ *   points = outline.points
+ */
+static VALUE ft_outline_points(VALUE self) {
+  FT_Outline *outline;
+  FT_Vector *point;
+  VALUE ary;
+
+  Data_Get_Struct(self, FT_Outline, outline);
+  if (outline->n_points < 1)
+    return Qnil;
+
+  point = outline->points;
+  ary = rb_ary_new2(outline->n_points);
+  for(int i = 0; i < outline->n_points; i++) {
+    VALUE v_ary = rb_ary_new2(2);
+    rb_ary_push(v_ary, LONG2FIX(point->x));
+    rb_ary_push(v_ary, LONG2FIX(point->y));
+    rb_ary_push(ary, v_ary);
+    point++;
+  }
+
+  return ary;
+}
+
+/*
+ * A pointer to an array of chars that is `n_points`
+ * in size. This array specifies each point's type
+ *
+ * Example:
+ *   tags = outline.tags
+ */
+static VALUE ft_outline_tags(VALUE self) {
+  FT_Outline *outline;
+  char *tag;
+  VALUE ary;
+
+  Data_Get_Struct(self, FT_Outline, outline);
+  if (outline->n_points < 1)
+    return Qnil;
+
+  tag = outline->tags;
+  ary = rb_ary_new2(outline->n_points);
+  for(int i = 0; i < outline->n_points; i++) {
+    rb_ary_push(ary, CHR2FIX(*tag));
+    tag++;
+  }
+
+  return ary;
+}
+
+/*
+ * An array of shorts that is `n_contours` in size.
+ * These shorts specify the end point of each contour
+ * in the outline
+ *
+ * Example:
+ *   contours = outline.contours
+ */
+static VALUE ft_outline_contours(VALUE self) {
+  FT_Outline *outline;
+  short *contour;
+  VALUE ary;
+
+  Data_Get_Struct(self, FT_Outline, outline);
+  if (outline->n_contours < 1)
+    return Qnil;
+
+  contour = outline->contours;
+  ary = rb_ary_new2(outline->n_contours);
+  for(int i = 0; i < outline->n_contours; i++) {
+    rb_ary_push(ary, INT2NUM((int) *contour));
+    contour++;
+  }
+
+  return ary;
+}
+
+/*
+ * Get the outline's bit flags. These flags characterize
+ * the outline and give hints to the scan-converter and hinter
+ * on how ot convert/grid-fit it.
+ *
+ * Example:
+ *   flags = outline.flags
+ */
+static VALUE ft_outline_flags(VALUE self) {
+  FT_Outline *outline;
+  Data_Get_Struct(self, FT_Outline, outline);
+  return INT2NUM(outline->flags);
+}
 
 /*********************/
 /* FT2::Size methods */
@@ -2746,7 +2889,7 @@ static VALUE ft_outlineglyph_init(VALUE self) {
 static VALUE ft_outlineglyph_outline(VALUE self) {
   FT_OutlineGlyph *glyph;
   Data_Get_Struct(self, FT_OutlineGlyph, glyph);
-  return Data_Wrap_Struct(cOutline, 0, dont_free, &(*glyph)->outline);
+  return Data_Wrap_Struct(cOutline, 0, outline_free, &(*glyph)->outline);
 }
 static void define_constants(void) {
   /***********************************/
@@ -3087,6 +3230,13 @@ void Init_ft2(void) {
   /* define FT2::Outline class */
   /*****************************/
   cOutline = rb_define_class_under(mFt2, "Outline", rb_cObject);
+  rb_define_singleton_method(cOutline, "initialize", ft_outline_init, 0);
+  rb_define_method(cOutline, "n_contours", ft_outline_n_contours, 0);
+  rb_define_method(cOutline, "n_points", ft_outline_n_points, 0);
+  rb_define_method(cOutline, "points", ft_outline_points, 0);
+  rb_define_method(cOutline, "tags", ft_outline_tags, 0);
+  rb_define_method(cOutline, "contours", ft_outline_contours, 0);
+  rb_define_method(cOutline, "flags", ft_outline_flags, 0);
 
   /**************************/
   /* define FT2::Size class */
@@ -3143,6 +3293,7 @@ void Init_ft2(void) {
   /*********************************/
   cOutlineGlyph = rb_define_class_under(mFt2, "OutlineGlyph", cGlyph);
   rb_define_singleton_method(cOutlineGlyph, "initialize", ft_outlineglyph_init, 0);
+  rb_define_method(cOutlineGlyph, "outline", ft_outlineglyph_outline, 0);
 
   /********************************/
   /* define FT2::GlyphClass class */
