@@ -1,19 +1,23 @@
-# -*- encoding: utf-8 -*-
-require File.expand_path('../lib/ft2-ruby/version', __FILE__)
+# coding: utf-8
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'ft2-ruby/version'
 
-Gem::Specification.new do |gem|
-  gem.authors       = ["Paul Duncan"]
-  gem.email         = ["pabs@pablotron.org"]
-  gem.description   = %q{FreeType2 bindings for Ruby 1.8 and 1.9}
-  gem.summary       = %q{FreeType2 bindings for Ruby}
-  gem.homepage      = "https://github.com/customink/ft2-ruby"
+Gem::Specification.new do |spec|
+  spec.name          = "ft2-ruby"
+  spec.version       = FT2::VERSION
+  spec.authors       = ["Paul Duncan", "Stafford Brunk"]
+  spec.email         = ["pabs@pablotron.org", "sbrunk@customink.com"]
+  spec.description   = %q{FreeType2 bindings for Ruby}
+  spec.summary       = %q{FreeType2 bindings for Ruby}
+  spec.homepage      = "https://github.com/customink/ft2-ruby"
+  spec.license       = "MIT"
 
-  gem.files         = `git ls-files`.split($\)
-  gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
-  gem.extensions    = ['ext/ft2-ruby/extconf.rb']
-  gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
-  gem.name          = "ft2-ruby"
-  gem.require_paths = ["lib"]
-  gem.version       = FT2::VERSION
-  gem.license       = "MIT"
+  spec.files         = `git ls-files -z`.split("\x0")
+  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
+  spec.extensions    = ['ext/ft2-ruby/extconf.rb']
+  spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
+  spec.require_paths = ["lib"]
+
+  spec.add_development_dependency "rake-compiler"
 end
