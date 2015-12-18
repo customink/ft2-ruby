@@ -2264,7 +2264,7 @@ static VALUE ft_outline_init(VALUE self) {
 static VALUE ft_outline_n_contours(VALUE self) {
   FT_Outline *outline;
   Data_Get_Struct(self, FT_Outline, outline);
-  return INT2NUM((int) outline->n_contours);
+  return INT2FIX((int) outline->n_contours);
 }
 
 /*
@@ -2276,7 +2276,7 @@ static VALUE ft_outline_n_contours(VALUE self) {
 static VALUE ft_outline_n_points(VALUE self) {
   FT_Outline *outline;
   Data_Get_Struct(self, FT_Outline, outline);
-  return INT2NUM((int) outline->n_points);
+  return INT2FIX((int) outline->n_points);
 }
 
 /*
@@ -2354,7 +2354,7 @@ static VALUE ft_outline_contours(VALUE self) {
   contour = outline->contours;
   ary = rb_ary_new2(outline->n_contours);
   for(int i = 0; i < outline->n_contours; i++) {
-    rb_ary_push(ary, INT2NUM((int) *contour));
+    rb_ary_push(ary, INT2FIX((int) *contour));
     contour++;
   }
 
@@ -2372,7 +2372,7 @@ static VALUE ft_outline_contours(VALUE self) {
 static VALUE ft_outline_flags(VALUE self) {
   FT_Outline *outline;
   Data_Get_Struct(self, FT_Outline, outline);
-  return INT2NUM(outline->flags);
+  return INT2FIX(outline->flags);
 }
 
 /*********************/
