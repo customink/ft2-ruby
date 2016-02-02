@@ -2297,7 +2297,8 @@ static VALUE ft_outline_points(VALUE self) {
 
   point = outline->points;
   ary = rb_ary_new2(outline->n_points);
-  for(int i = 0; i < outline->n_points; i++) {
+  int i;
+  for(i = 0; i < outline->n_points; i++) {
     VALUE v_ary = rb_ary_new2(2);
     rb_ary_push(v_ary, LONG2FIX(point->x));
     rb_ary_push(v_ary, LONG2FIX(point->y));
@@ -2326,7 +2327,8 @@ static VALUE ft_outline_tags(VALUE self) {
 
   tag = outline->tags;
   ary = rb_ary_new2(outline->n_points);
-  for(int i = 0; i < outline->n_points; i++) {
+  int i;
+  for(i = 0; i < outline->n_points; i++) {
     rb_ary_push(ary, CHR2FIX(*tag));
     tag++;
   }
@@ -2353,7 +2355,8 @@ static VALUE ft_outline_contours(VALUE self) {
 
   contour = outline->contours;
   ary = rb_ary_new2(outline->n_contours);
-  for(int i = 0; i < outline->n_contours; i++) {
+  int i;
+  for(i = 0; i < outline->n_contours; i++) {
     rb_ary_push(ary, INT2FIX((int) *contour));
     contour++;
   }
